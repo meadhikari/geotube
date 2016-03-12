@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geotube</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        }
+        #map {
+        height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+<script>
+    var map;
+    function getCountry(addrComponents) {
+        for (var i = 0; i < addrComponents.length; i++) {
+            if (addrComponents[i].types[0] == "country") {
+                return addrComponents[i].short_name;
+            }
+            if (addrComponents[i].types.length == 2) {
+                if (addrComponents[i].types[0] == "political") {
+                    return addrComponents[i].short_name;
+                }
+            }
+        }
+        return false;
+    }
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 0, lng: 0},
+          zoom: 2,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+
+        });
+        google.maps.event.addListener(map, "click", function (event) {
+            //lat and lng is available in e object
+
+            var that = this;
+            var iwindow = new google.maps.InfoWindow;
+            google.maps.event.addListener(map, 'click', function() {
+                iwindow.close();
+            });
+
+
+        $.get( "http://maps.googleapis.com/maps/api/geocode/json?latlng="+event.latLng.lat()+","+event.latLng.lng()+"&sensor=false", function( data ) {
+                 comp = data.results[0].address_components
+                 url = "https://www.googleapis.com/youtube/v3/videos?part=id,%20snippet,contentDetails&chart=mostPopular&regionCode="+getCountry(comp)+"&key=AIzaSyAigYblmsx3vaFZmGEr2MVO3spwJsBMKgw"
+                  $.get( url, function( data ) {
+                      iwindow.setContent('<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/'+data.items[0].id+'?autoplay=1&origin=http://example.com" frameborder="0"/>')
+                      iwindow.setPosition({lat: event.latLng.lat(), lng: event.latLng.lng()});
+                      iwindow.open(map,that);
+                  });
+        });
+      });
+    }
+
+
+
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAigYblmsx3vaFZmGEr2MVO3spwJsBMKgw&callback=initMap"
+        async defer></script>
+</body>
+</html>
