@@ -54,7 +54,7 @@
                  comp = data.results[0].address_components
                  url = "https://www.googleapis.com/youtube/v3/videos?part=id,%20snippet,contentDetails&chart=mostPopular&regionCode="+getCountry(comp)+"&key=AIzaSyAigYblmsx3vaFZmGEr2MVO3spwJsBMKgw"
                   $.get( url, function( data ) {
-                      iwindow.setContent('<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/'+data.items[0].id+'?autoplay=1&origin=http://example.com" frameborder="0"/>')
+                      iwindow.setContent('<iframe id="ytplayer" type="text/html" width="640" height="390" src="http://www.youtube.com/embed/'+data.items[0].id+'?autoplay=1&origin=http://example.com" webkitallowfullscreen mozallowfullscreen allowfullscreen frameborder="0"/>')
                       iwindow.setPosition({lat: event.latLng.lat(), lng: event.latLng.lng()});
                       iwindow.open(map,that);
                   });
